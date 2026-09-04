@@ -6,7 +6,7 @@ This repository contains an API regression suite for the public Restful Booker s
 https://restful-booker.herokuapp.com
 ```
 
-The suite is built with **Java, Maven, RestAssured, and Cucumber**, producing HTML/JSON/XML reports plus Maven Surefire output. The test flow is: feature file -> step definition -> reusable client/service layer -> RestAssured request -> shared scenario context -> assertions and reports.
+The suite is built with Java, Maven, RestAssured, Cucumber, and JUnit Platform. Tests can be executed through the JUnit Platform suite using Maven Surefire, or individual feature files can be run directly using IntelliJ’s Cucumber runner. Cucumber generates HTML, JSON, and XML reports, while Surefire records Maven test-execution results.
 
 ## Test Strategy
 
@@ -25,7 +25,6 @@ Covered areas:
 Deliberately left out:
 
 - Database validation, because this is a public black-box API with no DB access.
-- SOAP/WSDL coverage, because all endpoints in scope are REST endpoints.
 - Full performance testing, because the assignment asks for regression safety rather than load testing.
 - Tests that depend on preloaded records, because the shared instance resets roughly every 10 minutes.
 
@@ -59,7 +58,7 @@ Report outputs:
 reports/cucumber-reports/cucumber.html
 reports/cucumber-reports/cucumber.json
 reports/cucumber-reports/cucumber.xml
-target/surefire-reports/
+
 ```
 
 The `reports/cucumber-reports` folder is updated on every test run, so the checked-in report stays aligned with the latest execution for assignment submission.
