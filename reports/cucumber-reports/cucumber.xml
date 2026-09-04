@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Cucumber" time="57.437" tests="26" skipped="0" failures="10" errors="0">
+<testcase classname="Authentication and authorization" name="Generate an authentication token with valid credentials" time="4.509">
+<system-out><![CDATA[
+When I request an auth token with valid credentials.........................passed
+Then the response status should be 200......................................passed
+And the response should contain an auth token...............................passed
+]]></system-out>
+</testcase>
+<testcase classname="Authentication and authorization" name="Reject invalid credentials" time="1.205">
+<system-out><![CDATA[
+When I request an auth token with username "admin" and password "wrong-password".passed
+Then the response status should be 200......................................passed
+And the auth token should not be created....................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Authentication and authorization" name="Reject full booking update without authentication" time="2.45">
+<system-out><![CDATA[
+Given I have created a booking for authorization checks.....................passed
+And I have a valid updated booking payload..................................passed
+When I fully update the booking without authentication......................passed
+Then the response status should be 403......................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Authentication and authorization" name="Reject partial booking update with an invalid token" time="2.401">
+<system-out><![CDATA[
+Given I have created a booking for authorization checks.....................passed
+And I have a valid partial booking update...................................passed
+When I partially update the booking with token "invalid-token"..............passed
+Then the response status should be 403......................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Authentication and authorization" name="Reject booking deletion without authentication" time="2.378">
+<system-out><![CDATA[
+Given I have created a booking for authorization checks.....................passed
+When I delete the booking without authentication............................passed
+Then the response status should be 403......................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API core journeys" name="Health check confirms the API is available" time="1.201">
+<system-out><![CDATA[
+When I check the API health.................................................passed
+Then the response status should be 201......................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API core journeys" name="Create and retrieve a booking" time="2.829">
+<system-out><![CDATA[
+Given I have a valid booking payload........................................passed
+When I create the booking...................................................passed
+Then the response status should be 200......................................passed
+And the booking should be created successfully..............................passed
+And the created booking response should match the booking schema............passed
+When I retrieve the created booking.........................................passed
+Then the response status should be 200......................................passed
+And the booking details should match the current booking payload............passed
+And the booking response should match the booking schema....................passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API core journeys" name="Fully update a booking" time="4.821">
+<system-out><![CDATA[
+Given I have created a booking..............................................passed
+And I have a valid updated booking payload..................................passed
+When I fully update the booking with valid authentication...................passed
+Then the response status should be 200......................................passed
+And the booking details should match the current booking payload............passed
+When I retrieve the created booking.........................................passed
+Then the booking details should match the current booking payload...........passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API core journeys" name="Partially update a booking" time="3.5">
+<system-out><![CDATA[
+Given I have created a booking..............................................passed
+And I have a valid partial booking update...................................passed
+When I partially update the booking with valid authentication...............passed
+Then the response status should be 200......................................passed
+And the partial update should be reflected in the response..................passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API core journeys" name="Delete a booking" time="4.641">
+<system-out><![CDATA[
+Given I have created a booking..............................................passed
+When I delete the booking with valid authentication.........................passed
+Then the response status should be 201......................................passed
+When I retrieve the created booking.........................................passed
+Then the response status should be 404......................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API core journeys" name="List booking IDs" time="1.874">
+<system-out><![CDATA[
+When I list booking ids.....................................................passed
+Then the response status should be 200......................................passed
+And the booking id list should use the expected contract....................passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API list filters" name="Filter booking ids by firstname and lastname" time="2.389">
+<system-out><![CDATA[
+Given I have created a booking..............................................passed
+When I list booking ids filtered by the created booking's firstname and lastname.passed
+Then the response status should be 200......................................passed
+And the filtered booking id list should include the created booking id......passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API list filters" name="Filter booking ids by checkin and checkout dates" time="3.49">
+<failure type="java.lang.AssertionError" message="
+Expecting UnmodifiableList:
+  [2464]
+to contain:
+  [4483]
+but could not find the following element(s):
+  [4483]
+">
+<![CDATA[java.lang.AssertionError: 
+Expecting UnmodifiableList:
+  [2464]
+to contain:
+  [4483]
+but could not find the following element(s):
+  [4483]
+
+	at steps.CommonAssertionSteps.filteredBookingIdListShouldIncludeCreatedBookingId(CommonAssertionSteps.java:75)
+	at ✽.the filtered booking id list should include the created booking id(classpath:features/booking_filters.feature:20)
+]]>
+</failure>
+<system-out><![CDATA[
+Given I have created a booking..............................................passed
+When I retrieve the created booking.........................................passed
+Then the response status should be 200......................................passed
+And the booking details should match the current booking payload............passed
+When I list booking ids filtered by the created booking's checkin and checkout dates.passed
+Then the response status should be 200......................................passed
+And the filtered booking id list should include the created booking id......failed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API list filters" name="Filter booking ids by a name that does not exist returns no results" time="2.315">
+<system-out><![CDATA[
+Given I have created a booking..............................................passed
+When I list booking ids filtered by firstname "NoSuchGuest9999XYZ" and lastname "NoSuchGuest9999XYZ".passed
+Then the response status should be 200......................................passed
+And the filtered booking id list should be empty............................passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject invalid booking payloads - #1.1" time="1.176">
+<failure type="java.lang.AssertionError" message="[Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  500
+to be between:
+  [400, 499]
+">
+<![CDATA[java.lang.AssertionError: [Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  500
+to be between:
+  [400, 499]
+
+	at steps.CommonAssertionSteps.responseStatusShouldBeClientError(CommonAssertionSteps.java:30)
+	at ✽.the response status should be a client error(classpath:features/booking_negative.feature:8)
+]]>
+</failure>
+<system-out><![CDATA[
+Given I have an invalid booking payload for "missing firstname".............passed
+When I create the booking...................................................passed
+Then the response status should be a client error...........................failed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject invalid booking payloads - #1.2" time="1.211">
+<failure type="java.lang.AssertionError" message="[Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  500
+to be between:
+  [400, 499]
+">
+<![CDATA[java.lang.AssertionError: [Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  500
+to be between:
+  [400, 499]
+
+	at steps.CommonAssertionSteps.responseStatusShouldBeClientError(CommonAssertionSteps.java:30)
+	at ✽.the response status should be a client error(classpath:features/booking_negative.feature:8)
+]]>
+</failure>
+<system-out><![CDATA[
+Given I have an invalid booking payload for "missing lastname"..............passed
+When I create the booking...................................................passed
+Then the response status should be a client error...........................failed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject invalid booking payloads - #1.3" time="1.191">
+<failure type="java.lang.AssertionError" message="[Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  500
+to be between:
+  [400, 499]
+">
+<![CDATA[java.lang.AssertionError: [Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  500
+to be between:
+  [400, 499]
+
+	at steps.CommonAssertionSteps.responseStatusShouldBeClientError(CommonAssertionSteps.java:30)
+	at ✽.the response status should be a client error(classpath:features/booking_negative.feature:8)
+]]>
+</failure>
+<system-out><![CDATA[
+Given I have an invalid booking payload for "missing bookingdates"..........passed
+When I create the booking...................................................passed
+Then the response status should be a client error...........................failed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject invalid booking payloads - #1.4" time="1.136">
+<failure type="java.lang.AssertionError" message="[Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  200
+to be between:
+  [400, 499]
+">
+<![CDATA[java.lang.AssertionError: [Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  200
+to be between:
+  [400, 499]
+
+	at steps.CommonAssertionSteps.responseStatusShouldBeClientError(CommonAssertionSteps.java:30)
+	at ✽.the response status should be a client error(classpath:features/booking_negative.feature:8)
+]]>
+</failure>
+<system-out><![CDATA[
+Given I have an invalid booking payload for "negative total price"..........passed
+When I create the booking...................................................passed
+Then the response status should be a client error...........................failed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject invalid booking payloads - #1.5" time="1.192">
+<failure type="java.lang.AssertionError" message="[Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  200
+to be between:
+  [400, 499]
+">
+<![CDATA[java.lang.AssertionError: [Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  200
+to be between:
+  [400, 499]
+
+	at steps.CommonAssertionSteps.responseStatusShouldBeClientError(CommonAssertionSteps.java:30)
+	at ✽.the response status should be a client error(classpath:features/booking_negative.feature:8)
+]]>
+</failure>
+<system-out><![CDATA[
+Given I have an invalid booking payload for "zero total price"..............passed
+When I create the booking...................................................passed
+Then the response status should be a client error...........................failed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject invalid booking payloads - #1.6" time="1.163">
+<failure type="java.lang.AssertionError" message="[Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  200
+to be between:
+  [400, 499]
+">
+<![CDATA[java.lang.AssertionError: [Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  200
+to be between:
+  [400, 499]
+
+	at steps.CommonAssertionSteps.responseStatusShouldBeClientError(CommonAssertionSteps.java:30)
+	at ✽.the response status should be a client error(classpath:features/booking_negative.feature:8)
+]]>
+</failure>
+<system-out><![CDATA[
+Given I have an invalid booking payload for "total price as text"...........passed
+When I create the booking...................................................passed
+Then the response status should be a client error...........................failed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject invalid booking payloads - #1.7" time="1.211">
+<failure type="java.lang.AssertionError" message="[Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  200
+to be between:
+  [400, 499]
+">
+<![CDATA[java.lang.AssertionError: [Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  200
+to be between:
+  [400, 499]
+
+	at steps.CommonAssertionSteps.responseStatusShouldBeClientError(CommonAssertionSteps.java:30)
+	at ✽.the response status should be a client error(classpath:features/booking_negative.feature:8)
+]]>
+</failure>
+<system-out><![CDATA[
+Given I have an invalid booking payload for "checkout before checkin".......passed
+When I create the booking...................................................passed
+Then the response status should be a client error...........................failed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject invalid booking payloads - #1.8" time="1.236">
+<failure type="java.lang.AssertionError" message="[Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  200
+to be between:
+  [400, 499]
+">
+<![CDATA[java.lang.AssertionError: [Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  200
+to be between:
+  [400, 499]
+
+	at steps.CommonAssertionSteps.responseStatusShouldBeClientError(CommonAssertionSteps.java:30)
+	at ✽.the response status should be a client error(classpath:features/booking_negative.feature:8)
+]]>
+</failure>
+<system-out><![CDATA[
+Given I have an invalid booking payload for "malformed checkin date"........passed
+When I create the booking...................................................passed
+Then the response status should be a client error...........................failed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject invalid booking payloads - #1.9" time="1.272">
+<failure type="java.lang.AssertionError" message="[Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  500
+to be between:
+  [400, 499]
+">
+<![CDATA[java.lang.AssertionError: [Invalid input should be rejected with a 4xx status code] 
+Expecting actual:
+  500
+to be between:
+  [400, 499]
+
+	at steps.CommonAssertionSteps.responseStatusShouldBeClientError(CommonAssertionSteps.java:30)
+	at ✽.the response status should be a client error(classpath:features/booking_negative.feature:8)
+]]>
+</failure>
+<system-out><![CDATA[
+Given I have an invalid booking payload for "empty payload".................passed
+When I create the booking...................................................passed
+Then the response status should be a client error...........................failed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Return not found for a booking id that does not exist" time="1.283">
+<system-out><![CDATA[
+Given I use booking id 999999999............................................passed
+When I retrieve the created booking.........................................passed
+Then the response status should be 404......................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject full update for a booking id that does not exist" time="2.477">
+<system-out><![CDATA[
+Given I use booking id 999999999............................................passed
+And I have a valid updated booking payload..................................passed
+When I fully update the booking with valid authentication...................passed
+Then the response status should be 405......................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Booking API negative and boundary cases" name="Reject deletion for a booking id that does not exist" time="2.344">
+<system-out><![CDATA[
+Given I use booking id 999999999............................................passed
+When I delete the booking with valid authentication.........................passed
+Then the response status should be 405......................................passed
+]]></system-out>
+</testcase>
+</testsuite>
